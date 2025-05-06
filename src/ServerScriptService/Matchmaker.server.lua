@@ -74,19 +74,35 @@ ReplicatedStorage.Shared.Functions.ReadyPlayer.OnServerInvoke = function(player:
 
 end;
 
+local function removePlayer(playerID: number, roomID: string): ()
+
+  local room = Room.get(roomID);
+  room = room:removePlayer(playerID);
+
+  if #room.players == 0 then
+
+    roomChangedEvents[roomID] = nil;
+    return room:delete();
+
+  end;
+
+  return room;
+
+end;
+
+ReplicatedStorage.Shared.Functions.LeaveRoom.OnServerInvoke = function(player: Player, roomID: unknown)
+
+  assert(typeof(roomID) == "string", "Room ID must be a string.");
+  
+  return removePlayer(player.UserId, roomID);
+
+end;
+
 Players.PlayerRemoving:Connect(function(player: Player)
 
   local roomID = playerRoomIDs[player.UserId];
   if not roomID then return end;
 
-  local room = Room.get(roomID);
-  room = room:removePlayer(player.UserId);
-
-  if #room.players == 0 then
-
-    room:delete();
-    roomChangedEvents[roomID] = nil;
-
-  end;
+  removePlayer(player.UserId, roomID);
 
 end);

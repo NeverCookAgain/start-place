@@ -12,6 +12,7 @@ type IRoom = IRoom.IRoom;
 local function Window()
 
   local room: IRoom?, setRoom = React.useState(nil :: IRoom?);
+  local shouldLeave, setShouldLeave = React.useState(false);
 
   React.useEffect(function()
 
@@ -57,6 +58,24 @@ local function Window()
     end;
 
   end, {room});
+
+  React.useEffect(function()
+
+    if shouldLeave then
+
+      if room then
+
+        ReplicatedStorage.Shared.Functions.LeaveRoom:InvokeServer(room.id);
+
+      end;
+
+      ReplicatedStorage.Client.Events.MenuChanged:Fire("MainMenu");
+      setRoom(nil);
+      setShouldLeave(false);
+
+    end;
+
+  end, {shouldLeave :: unknown, room});
 
   local playerSections = {};
   if room then
@@ -136,9 +155,10 @@ local function Window()
           text = "Main Menu";
           width = 100;
           textSize = 30;
+          isDisabled = shouldLeave;
           onClick = function()
 
-            ReplicatedStorage.Client.Events.MenuChanged:Fire("MainMenu");
+            setShouldLeave(true);
 
           end;
         });

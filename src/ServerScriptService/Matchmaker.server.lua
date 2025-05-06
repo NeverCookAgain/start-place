@@ -35,9 +35,21 @@ ReplicatedStorage.Shared.Functions.JoinRoom.OnServerInvoke = function(player: Pl
   assert(not roomID or typeof(roomID) == "string", "Room ID must be a string.");
 
   local room = if roomID then Room.get(roomID) else Room.random();
+  local characterNames = {"Bill Burgers", "Cousin Ricky", "Rigatoni", "Sweaty Todd"};
+  for _, player in room.players do
+
+    local characterNameIndex = table.find(characterNames, player.characterName);
+    if characterNameIndex then
+
+      table.remove(characterNames, characterNameIndex);
+
+    end;
+
+  end;
+  
   room = room:addPlayer({
     userID = player.UserId;
-    characterName = "Bill Burgers";
+    characterName = characterNames[1];
     isReady = false;
   });
 

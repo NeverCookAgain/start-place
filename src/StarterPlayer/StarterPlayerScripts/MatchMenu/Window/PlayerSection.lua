@@ -63,6 +63,9 @@ local function PlayerSection(properties: Properties)
 
   local characterImages = {
     ["Bill Burgers"] = "rbxassetid://138071730441626";
+    ["Cousin Ricky"] = "rbxassetid://126553087566940",
+    ["Rigatoni"] = "rbxassetid://130417105770674",
+    ["Sweaty Todd"] = "rbxassetid://139038730953933"
   }
 
   local isLargerThanPhone = useResponsiveDesign({

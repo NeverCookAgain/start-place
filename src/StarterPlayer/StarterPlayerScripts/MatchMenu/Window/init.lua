@@ -103,6 +103,9 @@ local function Window()
       UIListLayout = React.createElement("UIListLayout", {
         Padding = UDim.new(0, 15);
         SortOrder = Enum.SortOrder.LayoutOrder;
+        FillDirection = Enum.FillDirection.Horizontal;
+        HorizontalAlignment = Enum.HorizontalAlignment.Center;
+        VerticalAlignment = Enum.VerticalAlignment.Center;
       });
       PlayerSections = React.createElement(React.Fragment, {}, playerSections);
     });
@@ -136,28 +139,6 @@ local function Window()
           onClick = function()
 
             ReplicatedStorage.Client.Events.MenuChanged:Fire("MainMenu");
-
-          end;
-        });
-      });
-      RightButtons = React.createElement("Frame", {
-        AutomaticSize = Enum.AutomaticSize.XY;
-        BackgroundTransparency = 1;
-        LayoutOrder = 2;
-      }, {
-        UIListLayout = React.createElement("UIListLayout", {
-          Padding = UDim.new(0, 15);
-          SortOrder = Enum.SortOrder.LayoutOrder;
-          FillDirection = Enum.FillDirection.Horizontal;
-        });
-        PlayButton = React.createElement(Button, {
-          layoutOrder = 1;
-          text = "Change character";
-          width = 100;
-          textSize = 30;
-          onClick = function()
-
-            ReplicatedStorage.Client.Events.MenuChanged:Fire("MatchMenu");
 
           end;
         });

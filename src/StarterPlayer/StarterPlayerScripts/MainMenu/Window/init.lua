@@ -10,7 +10,7 @@ local Button = require(ReplicatedStorage.Client.Components.Button);
 local function Window()
 
   local isLargerThanPhone = useResponsiveDesign({
-    minWidth = 738;
+    minimumWidth = 738;
   });
 
   return React.createElement(React.Fragment, {}, {

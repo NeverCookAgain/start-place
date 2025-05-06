@@ -227,8 +227,6 @@ function Room.random(): IRoom
 
   end;
 
-  print(room);
-
   assert(room, "No available rooms.");
 
   return room;

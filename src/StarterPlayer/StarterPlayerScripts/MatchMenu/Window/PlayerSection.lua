@@ -7,6 +7,7 @@ local React = require(ReplicatedStorage.Shared.Packages.react);
 local IRoom = require(ReplicatedStorage.Client.IRoom);
 
 local Button = require(ReplicatedStorage.Client.Components.Button);
+local useResponsiveDesign = require(ReplicatedStorage.Client.Modules.useResponsiveDesign);
 
 type IRoom = IRoom.IRoom;
 
@@ -60,6 +61,14 @@ local function PlayerSection(properties: Properties)
 
   end, {properties.player :: unknown, shouldReady});
 
+  local characterImages = {
+    ["Bill Burgers"] = "rbxassetid://138071730441626";
+  }
+
+  local isLargerThanPhone = useResponsiveDesign({
+    minimumHeight = 700;
+  });
+
   return React.createElement("Frame", {
     AutomaticSize = Enum.AutomaticSize.XY;
     LayoutOrder = properties.layoutOrder;
@@ -68,6 +77,17 @@ local function PlayerSection(properties: Properties)
     UIListLayout = React.createElement("UIListLayout", {
       SortOrder = Enum.SortOrder.LayoutOrder;
       Padding = UDim.new(0, 15);
+      HorizontalAlignment = Enum.HorizontalAlignment.Center;
+    });
+    CharacterImage = React.createElement("ImageButton", {
+      BackgroundTransparency = 1;
+      Size = UDim2.fromOffset(if isLargerThanPhone then 200 else 100, if isLargerThanPhone then 200 else 100);
+      Image = characterImages[properties.player.characterName];
+      LayoutOrder = 1;
+    }, {
+      UIAspectRatioConstraint = React.createElement("UIAspectRatioConstraint", {
+        AspectRatio = 1;
+      });
     });
     PlayerName = React.createElement("TextLabel", {
       BackgroundTransparency = 1;
@@ -76,7 +96,7 @@ local function PlayerSection(properties: Properties)
       TextColor3 = Color3.new(1, 1, 1);
       FontFace = Font.fromName("Kalam", Enum.FontWeight.Bold);
       TextSize = 24;
-      LayoutOrder = 1;
+      LayoutOrder = 2;
     });
     ReadyStatus = React.createElement("TextLabel", {
       BackgroundTransparency = 1;
@@ -85,11 +105,11 @@ local function PlayerSection(properties: Properties)
       TextColor3 = Color3.new(1, 1, 1);
       FontFace = Font.fromName("Kalam");
       TextSize = 24;
-      LayoutOrder = 2;
+      LayoutOrder = 3;
     });
     ReadyButton = if properties.player.userID == Players.LocalPlayer.UserId and not properties.player.isReady then
       React.createElement(Button, {
-        layoutOrder = 3;
+        layoutOrder = 4;
         text = "Ready";
         width = 100;
         textSize = 24;

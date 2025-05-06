@@ -9,8 +9,10 @@ local ReactRoblox = require(ReplicatedStorage.Shared.Packages["react-roblox"]);
 local Window = require(script.Window);
 
 local screenGUI = Instance.new("ScreenGui");
-screenGUI.Name = "MainMenu";
+screenGUI.Name = "MatchMenu";
+screenGUI.ScreenInsets = Enum.ScreenInsets.None;
 screenGUI.Parent = Players.LocalPlayer:WaitForChild("PlayerGui");
+
 local root = ReactRoblox.createRoot(screenGUI);
 
 local function renderMenu()
@@ -21,7 +23,7 @@ end;
 
 ReplicatedStorage.Client.Events.MenuChanged.Event:Connect(function(menuName: string)
 
-  if menuName == "MainMenu" then
+  if menuName == screenGUI.Name then
 
     renderMenu();
 
@@ -32,5 +34,3 @@ ReplicatedStorage.Client.Events.MenuChanged.Event:Connect(function(menuName: str
   end
 
 end);
-
-renderMenu();

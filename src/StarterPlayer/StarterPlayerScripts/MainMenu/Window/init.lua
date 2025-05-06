@@ -5,7 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage");
 local React = require(ReplicatedStorage.Shared.Packages.react);
 
 local useResponsiveDesign = require(ReplicatedStorage.Client.Modules.useResponsiveDesign);
-local Button = require(script.Button);
+local Button = require(ReplicatedStorage.Client.Components.Button);
 
 local function Window()
 
@@ -52,8 +52,9 @@ local function Window()
         width = if isLargerThanPhone then 150 else 100;
         textSize = if isLargerThanPhone then 40 else 30;
         onClick = function()
-          local room = ReplicatedStorage.Shared.Functions.CreateRoom:InvokeServer();
-          ReplicatedStorage.Shared.Functions.ReserveServer:InvokeServer(room.id);
+
+          ReplicatedStorage.Client.Events.MenuChanged:Fire("MatchMenu");
+
         end;
       })
     });

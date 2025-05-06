@@ -16,26 +16,25 @@ export type ConstructorProperties = {
   id: string;
   serverAccessCode: string?;
   privateServerID: number?;
-  playerIDs: {number}?;
+  players: {IRoom.RoomPlayer}?;
 }
 
 function Room.new(properties: ConstructorProperties): IRoom
 
-  local function addPlayerID(self: IRoom, playerID: number): IRoom
+  local function addPlayer(self: IRoom, player: IRoom.RoomPlayer): IRoom
 
-    table.insert(self.playerIDs, playerID);
+    table.insert(self.players, player);
     return self:save();
 
   end;
 
-  local function removePlayerID(self: IRoom, playerID: number): IRoom
+  local function removePlayer(self: IRoom, playerID: number): IRoom
 
-    for i, id in self.playerIDs do
+    for i, player in self.players do
 
-      if id == playerID then
+      if playerID == player.userID then
 
-        table.remove(self.playerIDs, i);
-        break;
+        table.remove(self.players, i);
 
       end;
 
@@ -62,19 +61,23 @@ function Room.new(properties: ConstructorProperties): IRoom
 
         for _, player in Players:GetPlayers() do
 
-          if table.find(room.playerIDs, player.UserId) then
+          for _, roomPlayer in room.players do
 
-            local success, errorMessage = pcall(function()
+            if player.UserId == roomPlayer.userID then
 
-              local teleportOptions = Instance.new("TeleportOptions");
-              teleportOptions.ReservedServerAccessCode = room.serverAccessCode;
-              TeleportService:TeleportAsync(106198121236214, {player}, teleportOptions);
+              local success, errorMessage = pcall(function()
 
-            end);
+                local teleportOptions = Instance.new("TeleportOptions");
+                teleportOptions.ReservedServerAccessCode = room.serverAccessCode;
+                TeleportService:TeleportAsync(106198121236214, {player}, teleportOptions);
 
-            if not success then
+              end);
 
-              error(`Failed to teleport player {player.Name} to private server: {errorMessage}`);
+              if not success then
+
+                error(`Failed to teleport player {player.Name} to private server: {errorMessage}`);
+
+              end;
 
             end;
 
@@ -116,17 +119,51 @@ function Room.new(properties: ConstructorProperties): IRoom
 
   end;
 
+  local function readyPlayer(self: IRoom, playerID: number): IRoom
+
+    local shouldTeleport = true;
+
+    for i, player in self.players do
+
+      if playerID == player.userID then
+
+        player.isReady = true;
+
+      end;
+
+      if not player.isReady then
+
+        shouldTeleport = false;
+
+      end;
+
+    end;
+
+    self = self:save();
+
+    return if shouldTeleport then self:reserveServer() else self;
+
+  end;
+
+  local function delete(self: IRoom): ()
+
+    MemoryStoreService:GetSortedMap("Rooms"):RemoveAsync(self.id);
+
+  end;
+
   local room = {
     id = properties.id;
-    playerIDs = properties.playerIDs or {},
+    players = properties.players or {},
     privateServerID = properties.privateServerID or nil;
     serverAccessCode = properties.serverAccessCode or nil;
-    addPlayerID = addPlayerID;
-    removePlayerID = removePlayerID;
+    addPlayer = addPlayer;
+    removePlayer = removePlayer;
     toString = toString;
     watch = watch;
+    readyPlayer = readyPlayer;
     save = save;
     reserveServer = reserveServer;
+    delete = delete;
   }
 
   return room;
@@ -157,11 +194,43 @@ end;
 
 function Room.random(): IRoom
 
+  local room: IRoom? = nil;
   local encodedRoomDataList = MemoryStoreService:GetSortedMap("Rooms"):GetRangeAsync(Enum.SortDirection.Ascending, 100);
-  local randomIndex = math.random(1, #encodedRoomDataList);
-  local randomEncodedRoomData = encodedRoomDataList[randomIndex].value;
-  local roomData = HttpService:JSONDecode(randomEncodedRoomData);
-  local room = Room.new(roomData);
+  while not room and #encodedRoomDataList > 0 and task.wait() do
+
+    local randomIndex = math.random(1, #encodedRoomDataList);
+    local randomEncodedRoomData = encodedRoomDataList[randomIndex].value;
+    local roomData = HttpService:JSONDecode(randomEncodedRoomData);
+    local possibleRoom = Room.new(roomData);
+
+    local areAllPlayersReady = true;
+    for _, player in possibleRoom.players do
+
+      if not player.isReady then
+        
+        areAllPlayersReady = false;
+        break;
+
+      end;
+
+    end;
+
+    if areAllPlayersReady then
+
+      table.remove(encodedRoomDataList, randomIndex);
+
+    else
+
+      room = possibleRoom;
+
+    end;
+
+  end;
+
+  print(room);
+
+  assert(room, "No available rooms.");
+
   return room;
 
 end;

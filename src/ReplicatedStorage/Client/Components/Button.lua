@@ -9,6 +9,7 @@ export type Properties = {
   text: string;
   width: number;
   textSize: number;
+  isDisabled: boolean?;
 }
 
 local function Button(properties: Properties)
@@ -17,12 +18,15 @@ local function Button(properties: Properties)
     BackgroundTransparency = 1;
     LayoutOrder = properties.layoutOrder;
     Image = "rbxassetid://119649376156285";
+    ImageTransparency = if properties.isDisabled then 0.5 else 0;
     Size = UDim2.new(0, properties.width, 0, properties.width);
-    [React.Event.Activated] = function()
+    [React.Event.Activated] = if not properties.isDisabled then
+      function()
 
-      properties.onClick()
+        properties.onClick()
 
-    end;
+      end
+    else nil;
   }, {
     UIAspectRatioConstraint = React.createElement("UIAspectRatioConstraint", {
       AspectRatio = 2.28;
@@ -37,6 +41,7 @@ local function Button(properties: Properties)
       FontFace = Font.fromName("Kalam");
       Text = properties.text;
       TextSize = properties.textSize;
+      TextTransparency = if properties.isDisabled then 0.5 else 0;
     });
   });
 

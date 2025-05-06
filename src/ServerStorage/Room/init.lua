@@ -53,10 +53,9 @@ function Room.new(properties: ConstructorProperties): IRoom
 
   local function watch(self: IRoom): RBXScriptConnection
 
-    return MessagingService:SubscribeAsync(`Room{self.id}`, function()
+    return MessagingService:SubscribeAsync(`Room{self.id}`, function(message)
   
-      local roomData = MemoryStoreService:GetSortedMap("Rooms"):GetAsync(self.id);
-      local room = Room.new(roomData);
+      local room = Room.new(HttpService:JSONDecode(message.Data));
       ReplicatedStorage.Shared.Events.RoomUpdated:FireAllClients(room);
 
       if room.serverAccessCode then
@@ -69,12 +68,14 @@ function Room.new(properties: ConstructorProperties): IRoom
 
               local teleportOptions = Instance.new("TeleportOptions");
               teleportOptions.ReservedServerAccessCode = room.serverAccessCode;
-              TeleportService:TeleportAsync(1234567890, {player}, teleportOptions);
+              TeleportService:TeleportAsync(106198121236214, {player}, teleportOptions);
 
             end);
 
             if not success then
-              warn(`Failed to teleport player {player.Name} to private server: {errorMessage}`);
+
+              error(`Failed to teleport player {player.Name} to private server: {errorMessage}`);
+
             end;
 
           end;
@@ -90,19 +91,28 @@ function Room.new(properties: ConstructorProperties): IRoom
   local function save(self: IRoom): IRoom
 
     MemoryStoreService:GetSortedMap("Rooms"):SetAsync(self.id, self:toString(), 6000);
+    MessagingService:PublishAsync(`Room{self.id}`, self:toString());
     return Room.get(self.id);
 
   end;
 
   local function reserveServer(self: IRoom): IRoom
 
-    local serverAccessCode, privateServerId = TeleportService:ReserveServer(1234567890);
-    self.serverAccessCode = serverAccessCode;
-    self.privateServerID = privateServerId;
+    local isReserved, errorMessage = pcall(function()
 
-    MemoryStoreService:GetSortedMap("Rooms"):SetAsync(self.id, self:toString(), 6000);
+      local serverAccessCode, privateServerID = TeleportService:ReserveServer(106198121236214);
+      self.serverAccessCode = serverAccessCode;
+      self.privateServerID = privateServerID;
+      
+    end);
 
-    return Room.get(self.id);
+    if not isReserved then
+
+      error(`Failed to reserve server: {errorMessage}`);
+
+    end;
+
+    return self:save();
 
   end;
 
@@ -133,12 +143,25 @@ function Room.create(): IRoom
 
 end;
 
-function Room.get(roomId: string): IRoom
+function Room.get(roomID: string): IRoom
 
-  local roomData = MemoryStoreService:GetSortedMap("Rooms"):GetAsync(roomId);
-  assert(roomData, `Room {roomId} does not exist.`);
+  local encodedRoomData = MemoryStoreService:GetSortedMap("Rooms"):GetAsync(roomID);
+  assert(encodedRoomData, `Room {roomID} does not exist.`);
+
+  local roomData = HttpService:JSONDecode(encodedRoomData);
   local room = Room.new(roomData);
 
+  return room;
+
+end;
+
+function Room.random(): IRoom
+
+  local encodedRoomDataList = MemoryStoreService:GetSortedMap("Rooms"):GetRangeAsync(Enum.SortDirection.Ascending, 100);
+  local randomIndex = math.random(1, #encodedRoomDataList);
+  local randomEncodedRoomData = encodedRoomDataList[randomIndex].value;
+  local roomData = HttpService:JSONDecode(randomEncodedRoomData);
+  local room = Room.new(roomData);
   return room;
 
 end;

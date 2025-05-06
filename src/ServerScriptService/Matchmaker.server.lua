@@ -24,9 +24,9 @@ end;
 
 ReplicatedStorage.Shared.Functions.JoinRoom.OnServerInvoke = function(player: Player, roomID: unknown)
 
-  assert(typeof(roomID) == "string", "Room ID must be a string.");
+  assert(not roomID or typeof(roomID) == "string", "Room ID must be a string.");
 
-  local room = Room.get(roomID);
+  local room = if roomID then Room.get(roomID) else Room.random();
   room = room:addPlayerID(player.UserId);
 
   if not roomChangedEvents[room.id] then
@@ -42,10 +42,8 @@ end;
 ReplicatedStorage.Shared.Functions.ReserveServer.OnServerInvoke = function(player: Player, roomID: unknown)
 
   assert(typeof(roomID) == "string", "Room ID must be a string.");
-
   local room = Room.get(roomID);
-  room = room:reserveServer();
 
-  return room;
+  return room:reserveServer();
 
 end;

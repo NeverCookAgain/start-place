@@ -13,7 +13,7 @@
           "$path": "Packages"
         },
         "PlaceMap": {
-          "$path": "src/ReplicatedStorage/Shared/PlaceMap.development.lua"
+          "$path": "src/ReplicatedStorage/Shared/PlaceMap.staging.lua"
         }
       }
     },

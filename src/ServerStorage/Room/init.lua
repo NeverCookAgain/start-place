@@ -7,6 +7,8 @@ local MessagingService = game:GetService("MessagingService");
 local MemoryStoreService = game:GetService("MemoryStoreService");
 local TeleportService = game:GetService("TeleportService");
 
+local PlaceMap = require(ReplicatedStorage.Shared.PlaceMap);
+
 local IRoom = require(script.IRoom);
 type IRoom = IRoom.IRoom;
 
@@ -69,7 +71,7 @@ function Room.new(properties: ConstructorProperties): IRoom
 
                 local teleportOptions = Instance.new("TeleportOptions");
                 teleportOptions.ReservedServerAccessCode = room.serverAccessCode;
-                TeleportService:TeleportAsync(106198121236214, {player}, teleportOptions);
+                TeleportService:TeleportAsync(PlaceMap.Kitchen, {player}, teleportOptions);
 
               end);
 
@@ -103,7 +105,7 @@ function Room.new(properties: ConstructorProperties): IRoom
 
     local isReserved, errorMessage = pcall(function()
 
-      local serverAccessCode, privateServerID = TeleportService:ReserveServer(106198121236214);
+      local serverAccessCode, privateServerID = TeleportService:ReserveServer(PlaceMap.Kitchen);
       self.serverAccessCode = serverAccessCode;
       self.privateServerID = privateServerID;
       

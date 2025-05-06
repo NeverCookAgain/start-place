@@ -3,9 +3,6 @@
   "globIgnorePaths": ["**/*.production.lua", "**/*.staging.lua", "**/*.development.lua"],
   "tree": {
     "$className": "DataModel",
-    "Workspace": {
-      "$path": "src/Workspace"
-    },
     "ReplicatedStorage": {
       "Client": {
         "$path": "src/ReplicatedStorage/Client"
@@ -16,9 +13,6 @@
           "$path": "Packages"
         }
       }
-    },
-    "Lighting": {
-      "$path": "src/Lighting"
     },
     "Players": {
       "$properties": {

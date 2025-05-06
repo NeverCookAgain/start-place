@@ -1,0 +1,40 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Update Aftman dependencies",
+        "type": "shell",
+        "command": "aftman install",
+        "windows": {
+          "command": "aftman install"
+        },
+        "group": "none",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+        }
+      },
+      {
+        "label": "Update Wally dependencies",
+        "type": "shell",
+        "command": "wally install",
+        "windows": {
+          "command": "wally install"
+        },
+        "group": "none",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+        },
+        "dependsOn": [
+          "Update Aftman dependencies"
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,38 @@
+{
+  "name": "Never Cook Again (Development)",
+  "globIgnorePaths": ["**/*.production.lua", "**/*.staging.lua", "**/*.development.lua"],
+  "tree": {
+    "$className": "DataModel",
+    "Workspace": {
+      "$path": "src/Workspace"
+    },
+    "ReplicatedStorage": {
+      "Client": {
+        "$path": "src/ReplicatedStorage/Client"
+      },
+      "Shared": {
+        "$path": "src/ReplicatedStorage/Shared",
+        "Packages": {
+          "$path": "Packages"
+        }
+      }
+    },
+    "Lighting": {
+      "$path": "src/Lighting"
+    },
+    "Players": {
+      "$properties": {
+        "CharacterAutoLoads": false
+      }
+    },
+    "ServerScriptService": {
+      "$path": "src/ServerScriptService"
+    },
+    "ServerStorage": {
+      "$path": "src/ServerStorage"
+    },
+    "StarterPlayer": {
+      "$path": "src/StarterPlayer"
+    }
+  }
+}

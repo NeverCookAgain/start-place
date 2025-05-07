@@ -108,6 +108,8 @@ function Room.new(properties: ConstructorProperties): IRoom
       local serverAccessCode, privateServerID = TeleportService:ReserveServer(PlaceMap.Kitchen);
       self.serverAccessCode = serverAccessCode;
       self.privateServerID = privateServerID;
+
+      MemoryStoreService:GetSortedMap("RoomIDs"):SetAsync(privateServerID, self.id, 1000);
       
     end);
 
@@ -191,6 +193,15 @@ function Room.get(roomID: string): IRoom
   local room = Room.new(roomData);
 
   return room;
+
+end;
+
+function Room.getByPrivateServerID(privateServerID: number): IRoom
+
+  local roomID = MemoryStoreService:GetSortedMap("RoomIDs"):GetAsync(privateServerID);
+  assert(roomID, `Room with private server ID {privateServerID} does not exist.`);
+
+  return Room.get(roomID);
 
 end;
 

@@ -11,6 +11,7 @@ export type RoomProperties = {
   players: {RoomPlayer};
   serverAccessCode: string?;
   privateServerID: number?;
+  isComplete: boolean;
 }
 
 export type RoomMethods = {

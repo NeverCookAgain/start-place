@@ -109,6 +109,8 @@ function Room.new(properties: ConstructorProperties): IRoom
       self.serverAccessCode = serverAccessCode;
       self.privateServerID = privateServerID;
 
+      self.isComplete = true;
+
       MemoryStoreService:GetSortedMap("RoomIDs"):SetAsync(privateServerID, self.id, 1000);
       
     end);
@@ -160,6 +162,7 @@ function Room.new(properties: ConstructorProperties): IRoom
     players = properties.players or {},
     privateServerID = properties.privateServerID or nil;
     serverAccessCode = properties.serverAccessCode or nil;
+    isComplete = false;
     addPlayer = addPlayer;
     removePlayer = removePlayer;
     toString = toString;

@@ -77,6 +77,13 @@ end;
 local function removePlayer(playerID: number, roomID: string): ()
 
   local room = Room.get(roomID);
+
+  if room.isComplete then
+
+    return;
+
+  end;
+
   room = room:removePlayer(playerID);
 
   if #room.players == 0 then

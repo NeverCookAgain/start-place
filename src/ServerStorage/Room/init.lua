@@ -231,7 +231,7 @@ function Room.random(): IRoom
 
     end;
 
-    if areAllPlayersReady then
+    if areAllPlayersReady or #possibleRoom.players >= 4 then
 
       table.remove(encodedRoomDataList, randomIndex);
 
